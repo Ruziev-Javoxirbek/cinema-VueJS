@@ -12,7 +12,6 @@ export const useAuthStore = defineStore('auth', {
     async login(credentials) {
       this.errorMessage = "";
       try {
-
         const response = await axios.post("http://localhost:8000/api/login", credentials);
         this.token = response.data.token;
         this.user = response.data.user;
@@ -33,21 +32,21 @@ export const useAuthStore = defineStore('auth', {
     async getUser() {
       this.errorMessage = "";
       try {
-        const response = await axios.post('http://localhost:8000/api/user', {
-          headers: {
-            Authorization: 'Bearer ' + this.token
+        const response = await axios.get('http://localhost:8000/api/user',
+          { headers: {
+            Authorization: `Bearer ` + this.token
           }
         });
         this.user = response.data;
       } catch (error) {
-        if(error.response) {
+        if (error.response) {
           this.errorMessage = error.response.data.message;
-          console.log(error);
-        } else if(error.request) {
+          console.error(error.response.data);
+        } else if (error.request) {
           this.errorMessage = error.message;
-          console.log(error);
+          console.error(error);
         } else {
-          console.log(error);
+          console.error(error);
         }
       }
     },
