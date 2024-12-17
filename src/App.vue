@@ -1,46 +1,81 @@
 <template>
-  <header>
-    <nav class="navbar">
-      <ul class="nav-links">
-        <li><router-link to="/">Главная</router-link></li>
-        <li><router-link to="/cities">Города</router-link></li>
-        <li><router-link to="/theaters">Кинотеатры</router-link></li>
-        <li><router-link to="/movies">Фильмы</router-link></li>
-        <li><router-link to="/sessions">Сеансы</router-link></li>
-      </ul>
-      <div class="auth-section">
-        <div v-if="isAuthenticated && user" class="user-info">
-          Добро пожаловать, {{ user.name }}
-          <button @click="logout" class="logout-button">Выход</button>
+  <Menubar :model="items">
+    <template #start>
+      <span>
+        <img src="@/assets/logo.svg" width="50" alt="Icon"/>
+      </span>
+    </template>
+    <template #item="{ item, props, hasSubmenu, root }">
+      <a class="flex items-center ml-6 p-4">
+        <router-link v-if="item.route" :to="item.route">
+          <span :class="item.icon"/>
+          <span class="ml-1">{{ item.label }}</span>
+        </router-link>
+      </a>
+    </template>
+    <template #end>
+      <div class="flex items-center gap-2">
+        <div v-if="isAuthenticated && user">
+          <span class="pi pi-fw pi-user mr-4"/>{{ user.name }}
+          <Button @click="logout" class="ml-4">Выйти</Button>
         </div>
-        <div v-else class="login-form">
+        <div v-else>
           <form @submit.prevent="login">
-            <div class="form-group">
-              <label for="email">Почта</label><br />
-              <input v-model="email" type="email" id="email" required />
-            </div>
-            <div class="form-group">
-              <label for="password">Пароль</label><br />
-              <input v-model="password" type="password" id="password" required />
-            </div>
-            <button type="submit" class="submit-button">Войти</button>
-            <p v-if="authError" class="error-message">{{ authError }}</p>
+            <InputText v-model="email" type="email" id="email" required placeholder="Логин"
+                       class="m-2 sm:w-auto" :class="{'p-invalid': authError}"/>
+            <InputText v-model="password" type="password" id="password" required placeholder="Пароль"
+                       class="m-2 sm:w-auto" :class="{'p-invalid': authError}"/>
+            <Button type="submit">Войти</Button>
+            <div class="ml-2"><small v-if="authError" class="error">{{ authError }}</small></div>
           </form>
         </div>
       </div>
-    </nav>
-  </header>
+    </template>
+  </Menubar>
   <router-view></router-view>
 </template>
-
 <script>
 import { useAuthStore } from '@/stores/authStore';
+import Button from 'primevue/button';
+import Menubar from 'primevue/menubar';
+import InputText from 'primevue/inputtext';
 export default {
+  components: { Button, Menubar, InputText },
   data() {
     return {
+      date: "",
       email: '',
       password: '',
       authStore: useAuthStore(),
+      items: [
+        {
+          label: 'Главная страница',
+          icon: 'pi pi-home',
+          route: '/',
+          shortcut: 'Ctrl + H',
+          submenu: [],
+        },
+        {
+          label: 'Города',
+          icon: 'pi pi-fw pi-map',
+          route: '/cities',
+        },
+        {
+          label: 'Кинотеатры',
+          icon: 'pi pi-fw pi-video',
+          route: '/theaters',
+        },
+        {
+          label: 'Фильмы',
+          icon: 'pi pi-fw pi-video',
+          route: '/movies',
+        },
+        {
+          label: 'Сеансы',
+          icon: 'pi pi-fw pi-clock',
+          route: '/sessions',
+        },
+      ],
     };
   },
   computed: {
@@ -73,108 +108,5 @@ export default {
 </script>
 
 <style scoped>
-/* Общие стили */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-  margin: 0;
-  padding: 0;
-}
 
-/* Навигация */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background-color: #004b7a;
-  color: #fff;
-}
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-links li {
-  margin: 0 15px;
-}
-
-.nav-links a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 20px;
-  border-radius: 5px;
-  padding: 5px 10px;
-}
-
-.nav-links a:hover {
-  background-color: #f36666;
-  text-decoration: underline;
-}
-
-/* Аутентификация */
-.auth-section {
-  display: flex;
-  align-items: center;
-}
-
-.user-info {
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-}
-
-.logout-button {
-  margin-left: 10px;
-  padding: 10px 15px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.logout-button:hover {
-  background-color: #c0392b;
-}
-
-.login-form {
-  text-align: right;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-input {
-  padding: 10px;
-  font-size: 16px;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.submit-button {
-  padding: 10px 15px;
-  background-color: #004b7a;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: all 0.3s;
-}
-
-.submit-button:hover {
-  background-color: #02b63e;
-}
-
-.error-message {
-  color: red;
-  margin-top: 10px;
-}
 </style>
