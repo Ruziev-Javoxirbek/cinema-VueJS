@@ -2,7 +2,7 @@
   <Menubar :model="items">
     <template #start>
       <span>
-        <img src="@/assets/logo.svg" width="50" alt="Icon"/>
+        <img src="@/assets/logo.svg" width="60" alt="Icon"/>
       </span>
     </template>
     <template #item="{ item, props, hasSubmenu, root }">
