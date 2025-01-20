@@ -13,24 +13,35 @@
       response-layout="scroll"
       :laading="true"
       :first="offset"
-    >
+      >
       <Column field="id" header="№"></Column>
+      <Column header="Изображение">
+        <template #body="{data}">
+          <img :src="data.picture_url" style="width: 100px;" />
+        </template>
+      </Column>
       <Column field="title" header="Название"></Column>
       <Column field="description" header="О фильме"></Column>
-      <Column field="release_date" header="Год выпуска"></Column>
+      <!--<Column field="release_date" header="Год выпуска"></Column>-->
       <Column field="duration" header="Время"></Column>
+      <template #footer>
+        <div class="text-end">
+          <Button type="button" @click="this.$router.push('/createMovie')" icon="pi pi-plus" label="Добавить фильм" />
+        </div>
+      </template>
     </DataTable>
   </div>
 </template>
-
 <script>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { useDataStore } from "@/stores/dataStore";
+import createMovie from "@/components/CreateMovie.vue";
+import Button from "primevue/button";
 
 export default {
   name: "Movies",
-  components: { DataTable, Column },
+  components: { DataTable, Column, Button },
   data() {
     return {
       dataStore: useDataStore(),
@@ -39,6 +50,9 @@ export default {
     }
   },
   computed: {
+    createMovie() {
+      return createMovie
+    },
     movies() {
       return this.dataStore.movies; // Список фильмов из хранилища
     },

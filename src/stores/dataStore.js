@@ -7,6 +7,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const useDataStore = defineStore("data", {
   state: () => ({
     movies: [], // Список фильмов
+    create_movie: [],
     movies_total: null, // Общее количество фильмов
     cities: [],
     cities_total: null,
@@ -15,6 +16,7 @@ export const useDataStore = defineStore("data", {
     sessions: [],
     sessions_total: null,
     errorMessage: "", // Сообщение об ошибке
+    errorCode: '',
   }),
   actions: {
     // Получение списка фильмов с постраничной загрузкой movies
@@ -192,6 +194,33 @@ export const useDataStore = defineStore("data", {
           console.log(error.request);
         } else {
           this.errorMessage = "Ошибка: " + error.message;
+          console.log(error);
+        }
+      }
+    },
+    // Доавление фильма
+    async create_movie(formData) {
+      this.errorMessage = "";
+      try {
+        const response = await axios.post(backendUrl + '/movies', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        this.errorCode = response.data.code;
+        this.errorMessage = response.data.message;
+      } catch (error) {
+        if (error.response) {
+          this.errorCode = 11;
+          this.errorMessage = error.response.data.message;
+          console.log(error);
+        } else if (error.request) {
+          this.errorCode = 12;
+          this.errorMessage = error.message;
+          console.log(error);
+        } else {
+          this.errorCode = 13;
           console.log(error);
         }
       }

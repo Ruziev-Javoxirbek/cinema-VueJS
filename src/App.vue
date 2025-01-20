@@ -21,10 +21,8 @@
         </div>
         <div v-else>
           <form @submit.prevent="login">
-            <InputText v-model="email" type="email" id="email" required placeholder="Логин"
-                       class="m-2 sm:w-auto" :class="{'p-invalid': authError}"/>
-            <InputText v-model="password" type="password" id="password" required placeholder="Пароль"
-                       class="m-2 sm:w-auto" :class="{'p-invalid': authError}"/>
+            <InputText v-model="email" type="email" id="email" autocomplete="email" required placeholder="Логин" />
+            <InputText v-model="password" type="password" id="password" autocomplete="current-password" required placeholder="Пароль" />
             <Button type="submit">Войти</Button>
             <div class="ml-2"><small v-if="authError" class="error">{{ authError }}</small></div>
           </form>
@@ -39,8 +37,9 @@ import { useAuthStore } from '@/stores/authStore';
 import Button from 'primevue/button';
 import Menubar from 'primevue/menubar';
 import InputText from 'primevue/inputtext';
+import Toast from 'primevue/toast';
 export default {
-  components: { Button, Menubar, InputText },
+  components: { Button, Menubar, InputText, Toast },
   data() {
     return {
       date: "",

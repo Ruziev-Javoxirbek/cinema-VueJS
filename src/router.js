@@ -4,6 +4,7 @@ import Movies from "@/components/Movies.vue";
 import Theaters from "@/components/Theaters.vue";
 import Cities from "@/components/Cities.vue";
 import Sessions from "@/components/Sessions.vue";
+import CreateMovie from "@/components/CreateMovie.vue";
 const routes = [
   {
     path: '/',
@@ -12,6 +13,10 @@ const routes = [
   {
     path: '/movies',
     component: Movies,
+  },
+  {
+    path: "/createMovie",
+    component: CreateMovie,
   },
   {
     path: '/theaters',
